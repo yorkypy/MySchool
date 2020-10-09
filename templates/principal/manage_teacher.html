@@ -1,0 +1,67 @@
+{% extends 'principal/base.html' %}
+{% load static %}
+
+
+{% block main_content %}
+<section class="content">
+    <a class="btn btn-primary" href="{% url 'add_teacher' %}"><i class="fas fa-plus"></i> New Staff</a>
+    <a class="btn btn-primary" href="#"><i class="fas fa-upload"></i> Upload</a><br />&nbsp;
+
+    {% if messages %}
+    <div class="form-group">
+        <div class="col-12">
+            {% for message in messages %}
+            {% if message.tags == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% elif message.tags == "success" %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="table-responsive" style="padding-right: 5px;">
+        <table class="table table-bordered table-hover" id="myTable" data-page-length='10'>
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Gender</th>
+                    <th>DOB</th>
+                    <th>Address</th>
+                    <th>Last Login</th>
+                    <th>Date Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr class="clickable-row" data-href="{% url 'teacher-detail' teacher.admin.id  %}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ teacher.admin.first_name }} {{ teacher.admin.last_name }}</td>
+                    <td>{{ teacher.admin.email }}</td>
+                    <td>{{ teacher.teacher_number }}</td>
+                    <td>{{ teacher.gender }}</td>
+                    <td>{{ teacher.dob }}</td>
+                    <td>{{ teacher.address }}</td>
+                    <td>{{ teacher.admin.last_login }}</td>
+                    <td>{{ teacher.admin.date_joined }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock main_content %}

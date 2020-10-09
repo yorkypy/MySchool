@@ -1592,7 +1592,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
      **
      * Utility method
      **
-     * Finds intersections of two paths
+     * Finds interSection of two paths
      > Parameters
      - path1 (string) path string
      - path2 (string) path string

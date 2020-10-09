@@ -24086,7 +24086,7 @@ var LineWrapper = /*#__PURE__*/function (_EventEmitter) {
         return lc++;
       };
 
-      this.emit('sectionStart', options, this);
+      this.emit('Sectiontart', options, this);
       this.eachWord(text, function (word, w, bk, last) {
         if (last == null || last.required) {
           _this2.emit('firstLine', options, _this2);
@@ -24222,7 +24222,7 @@ var LineWrapper = /*#__PURE__*/function (_EventEmitter) {
         this.emit('columnBreak', options, this);
       }
 
-      this.emit('sectionStart', options, this);
+      this.emit('Sectiontart', options, this);
       return true;
     }
   }]);
@@ -24411,7 +24411,7 @@ var TextMixin = {
           return _this2._fragment(text, _this2.x - indent, _this2.y, options);
       }
     });
-    wrapper.on('sectionStart', function () {
+    wrapper.on('Sectiontart', function () {
       var pos = indent + itemIndent * (level - 1);
       _this2.x += pos;
       return wrapper.lineWidth -= pos;
@@ -24945,7 +24945,7 @@ var PNGImage = /*#__PURE__*/function () {
         this.obj.data['Mask'] = mask;
       } else if (this.image.transparency.indexed) {
         // Create a transparency SMask for the image based on the data
-        // in the PLTE and tRNS sections. See below for details on SMasks.
+        // in the PLTE and tRNS Section. See below for details on SMasks.
         dataDecoded = true;
         return this.loadIndexedAlphaChannel();
       } else if (hasAlphaChannel) {

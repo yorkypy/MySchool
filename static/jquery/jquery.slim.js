@@ -3562,7 +3562,7 @@ jQuery.extend( {
 										throw new TypeError( "Thenable self-resolution" );
 									}
 
-									// Support: Promises/A+ sections 2.3.3.1, 3.5
+									// Support: Promises/A+ Section 2.3.3.1, 3.5
 									// https://promisesaplus.com/#point-54
 									// https://promisesaplus.com/#point-75
 									// Retrieve `then` only once

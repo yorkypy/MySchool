@@ -1,0 +1,120 @@
+{% extends 'principal/base.html' %}
+
+{% block page_title %}
+    Edit Staff | Username: {{ staff.admin.username }} | #ID : {{ staff.admin.id }}
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+            <div class="row" style="padding-top: 0px;">
+                <div class="col-md-12" style="padding-left: 90px; padding-right: 90px;">
+                    <div class="card card-primary" style="padding-left: 40px;">
+                    <div class="card-body">
+                        <h3><strong>Edit Teacher</strong></h3>
+                    </div>
+                    <form role="form" method="POST" action="{% url 'edit-teacher-save' %}">
+                        {% csrf_token %}
+                        {% if messages %}
+                        <div class="form-group">
+                        <div class="col-12">
+                            {% for message in messages %}
+                            {% if message.tags == "error" %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                            {% elif message.tags == "success" %}
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        </div>
+                        {% endif %}
+                            
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">First Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="first_name" value="{{ teacher.admin.first_name }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Last Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="last_name" value="{{ teacher.admin.last_name }}">
+                                    <input type="hidden" name="teacher_id" value="{{ teacher.admin.id }}" />
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="username" value="{{ teacher.admin.username }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Email address</label>
+                                <div class="col-sm-9">
+                                    <input type="email" class="form-control" name="email" value="{{ teacher.admin.email }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Staff Number</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" name="teacher_number" value="{{ teacher.teacher_number }}">
+                                </div>
+                            </div>
+                           
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Address</label>
+                                <div class="col-sm-9">
+                                    <input class="form-control" name="address" value="{{ teacher.address }}">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date of Birth</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control" name="dob" value="{{ teacher.dob }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Gender</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="gender" value="{{ teacher.gender}}">
+                                </div>
+                            </div>
+                        
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Passport</label>
+                                <div class="col-sm-9">
+                                    <input type="file" class="form-control" name="profile_pic" value="{{ teacher.profile_pic }}">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Update Teacher</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
