@@ -1,4 +1,5 @@
 
+from core_app.views.principal import StudentUploadView, downloadcsv
 from os import name
 from django.urls import path
 from core_app.views import views, principal, teacher, student 
@@ -22,6 +23,7 @@ urlpatterns = [
     path('delete_teacher/<teacher_id>/', principal.delete_teacher, name="delete-teacher"),
     path('teacher_detail/<teacher_id>', principal.teacher_detail, name='teacher-detail'),
     path('add_assign_section/', principal.add_assign_section, name='add-assign-section'),
+    path('add_assign_section_save/', principal.add_assign_section_save, name='add-assign-section-save'),
 
     path('add_section/', principal.add_section, name="add-section"),
     path('add_section_save/', principal.add_section_save, name="add-section-save"),
@@ -30,30 +32,35 @@ urlpatterns = [
     path('edit_section_save/', principal.edit_section_save, name="edit-section-save"),
     path('delete_section/<section_id>/', principal.delete_section, name="delete-section"),
 
-    path('manage_academic_year/', principal.manage_academic_year, name="manage_academic_year"),
-    path('add_academic_year/', principal.add_academic_year, name="add_academic_year"),
-    path('add_academic_year_save/', principal.add_academic_year_save, name="add_academic_year_save"),
-    path('edit_academic_year/<academic_year_id>', principal.edit_academic_year, name="edit_academic_year"),
-    path('edit_academic_year_save/', principal.edit_academic_year_save, name="edit_academic_year_save"),
-    path('delete_academic_year/<academic_year_id>/', principal.delete_academic_year, name="delete_academic_year"),
+    path('manage_academic_year/', principal.manage_academic_year, name="manage-academic-year"),
+    path('add_academic_year/', principal.add_academic_year, name="add-academic-year"),
+    path('add_academic_year_save/', principal.add_academic_year_save, name="add-academic-year-save"),
+    path('edit_academic_year/<academic_year_id>', principal.edit_academic_year, name="edit-academic-year"),
+    path('edit_academic_year_save/', principal.edit_academic_year_save, name="edit-academic-year-save"),
+    path('delete_academic_year/<academic_year_id>/', principal.delete_academic_year, name="delete-academic-year"),
 
-    path('add_student/', principal.add_student, name="add_student"),
-    path('add_student_save/', principal.add_student_save, name="add_student_save"),
-    path('edit_student/<student_id>', principal.edit_student, name="edit_student"),
-    path('edit_student_save/', principal.edit_student_save, name="edit_student_save"),
-    path('manage_student/', principal.manage_student, name="manage_student"),
-    path('student_detail/<student_id>', principal.student_detail, name='student_detail'),
-    path('delete_student/<student_id>/', principal.delete_student, name="delete_student"),
+    path('add_student/', principal.add_student, name="add-student"),
+    path('add_student_save/', principal.add_student_save, name="add-student-save"),
+    path('edit_student/<student_id>', principal.edit_student, name="edit-student"),
+    path('edit_student_save/', principal.edit_student_save, name="edit-student-save"),
+    path('manage_student/', principal.manage_student, name="manage-student"),
+    path('student_detail/<student_id>', principal.student_detail, name='student-detail'),
+    path('delete_student/<student_id>/', principal.delete_student, name="delete-student"),
+    path('students_upload/', principal.StudentUploadView.as_view(), name='students-upload'),
+    path('downloadcsv/', principal.downloadcsv, name='student-download'),
 
-    path('add_subject/', principal.add_subject, name="add_subject"),
-    path('add_subject_save/', principal.add_subject_save, name="add_subject_save"),
-    path('manage_subject/', principal.manage_subject, name="manage_subject"),
-    path('edit_subject/<subject_id>/', principal.edit_subject, name="edit_subject"),
-    path('edit_subject_save/', principal.edit_subject_save, name="edit_subject_save"),
-    path('delete_subject/<subject_id>/', principal.delete_subject, name="delete_subject"),
+    path('add_subject/', principal.add_subject, name="add-subject"),
+    path('add_subject_save/', principal.add_subject_save, name="add-subject-save"),
+    path('manage_subject/', principal.manage_subject, name="manage-subject"),
+    path('edit_subject/<subject_id>/', principal.edit_subject, name="edit-subject"),
+    path('edit_subject_save/', principal.edit_subject_save, name="edit-subject-save"),
+    path('delete_subject/<subject_id>/', principal.delete_subject, name="delete-subject"),
     
-    path('check_email_exist/', principal.check_email_exist, name="check_email_exist"),
-    path('check_username_exist/', principal.check_username_exist, name="check_username_exist"),
+    path('check_email_exist/', principal.check_email_exist, name="check-email-exist"),
+    path('check_username_exist/', principal.check_username_exist, name="check-username-exist"),
+    path('check_section_exist/', principal.check_section_exist, name="check-section-exist"),
+
+
     path('student_feedback_message/', principal.student_feedback_message, name="student_feedback_message"),
     path('student_feedback_message_reply/', principal.student_feedback_message_reply, name="student_feedback_message_reply"),
     path('teacher_feedback_message/', principal.teacher_feedback_message, name="teacher_feedback_message"),

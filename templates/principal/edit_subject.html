@@ -1,22 +1,23 @@
 {% extends 'principal/base.html' %}
-{% load static %}
+
+{% block page_title %}
+    Edit Subject | #ID : {{ subject.id }}
+{% endblock page_title %}
 
 {% block main_content %}
 
-
-
+{% load static %}
 
 <section class="content">
     <div class="container-fluid">
         <div class="row" style="padding-top: 0px;">
             <div class="col-md-12" style="padding-left: 90px; padding-right: 90px;">
-                <div class="card card-primary" style="padding-left: 100px; padding-right: 100px; padding-bottom: 50px;">
-                    <div class="card-body">
-                        <h3><strong>Edit Class</strong></h3>
-                    </div>
-                    <form role="form" method="POST" action="{% url 'edit-section-save' %}">
-                        {% csrf_token %}
-                        {% comment %} Display Messages {% endcomment %}
+                <div class="card card-primary" style="padding-left: 40px;">
+                <div class="card-body">
+                    <h3><strong>Edit Subject</strong></h3>
+                </div>
+                    <form role="form" method="POST" action="{% url 'edit-subject-save' %}">
+                        {% csrf_token %}                        
                         {% if messages %}
                         <div class="form-group">
                         <div class="col-12">
@@ -40,26 +41,43 @@
                         </div>
                         </div>
                         {% endif %}
-                            
 
                         <div class="card-body">
                             <div class="form-group">
-                                <label>Class Name </label>
-                                <input type="text" class="form-control" name="section" value="{{ section.section_name }}">
-                                <input type="hidden" name="section_id" value="{{ section.id }}" />
+                                <label>Subject Name </label>
+                                <input type="text" class="form-control" name="subject" value="{{ subject.subject_name }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Course </label>
+                                <select class="form-control" name="course">
+                                    {% for course in courses %}
+                                        <option value="{{ course.id }}" {% if course.id == subject.course_id.id %} selected {% endif %}>{{ course.course_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Staff </label>
+                                <select class="form-control" name="staff">
+                                    {% for staff in staffs %}
+                                        <option value="{{ staff.id }}" {% if staff.id == subject.staff_id.id %} selected {% endif %}>{{ staff.first_name }} {{ staff.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="hidden" name="subject_id" value="{{ subject.id }}" />
                             </div>
 
                         </div>
                         <div class="card-footer">
-                        <button type="submit" class="btn btn-primary" style="border-radius: 20px;">Update Class</button>
+                        
+                        <button type="submit" class="btn btn-primary">Update Subject</button>
                         </div>
                     </form>
                     </div>
-
                 </div>
             </div>
 
-        </div><!-- /.container-fluid -->
+        </div>
       </section>
 
   {% endblock main_content %}

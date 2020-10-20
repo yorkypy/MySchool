@@ -1,30 +1,18 @@
 {% extends 'principal/base.html' %}
-
-{% block page_title %}
-Add Subject
-{% endblock page_title %}
-
-{% block main_content %}
-
 {% load static %}
 
+
+{% block main_content %}
 <section class="content">
     <div class="container-fluid">
-
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Add Subject</h3>
+        <div class="row" style="padding-top: 0px;">
+            <div class="col-md-12" style="padding-left: 90px; padding-right: 90px;">
+                <div class="card card-primary" style="padding-left: 100px; padding-right: 100px; padding-bottom: 50px;">
+                    <div class="card-body">
+                        <h3><strong>Add Subject</strong></h3>
                     </div>
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <form role="form" method="POST" action="{% url 'add_subject_save' %}">
+                    <form role="form" method="POST" action="{% url 'add-subject-save' %}">
                         {% csrf_token %}
-
-
-                        {% comment %} Display Messages {% endcomment %}
                         {% if messages %}
                         <div class="form-group">
                             <div class="col-12">
@@ -51,45 +39,34 @@ Add Subject
                         </div>
                         {% endif %}
 
-
                         <div class="card-body">
                             <div class="form-group">
                                 <label>Subject Name </label>
-                                <input type="text" class="form-control" name="subject" placeholder="Enter Subject">
+                                <input type="text" class="form-control" name="subject" placeholder="Ex. English(12A)">
                             </div>
-
-                            <div class="form-group">
-                                <label>Course </label>
-                                <select class="form-control" name="course">
-                                    {% for course in courses %}
-                                    <option value="{{ course.id }}">{{ course.course_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Staff </label>
-                                <select class="form-control" name="staff">
-                                    {% for staff in staffs %}
-                                    <option value="{{ staff.id }}">{{ staff.first_name }} {{ staff.last_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
                         </div>
-                        <!-- /.card-body -->
-
+        
+                        <div class="card-body">
+                            
+                            <div class="form-group">
+                                <label>Subject Teacher</label>
+                                <select class="form-control" name="subject_t">
+                                    {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Add Subject</button>
                         </div>
                     </form>
                 </div>
-                <!-- /.card -->
 
             </div>
         </div>
 
-    </div><!-- /.container-fluid -->
+    </div>
 </section>
 
 {% endblock main_content %}

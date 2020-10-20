@@ -10,21 +10,14 @@ Add Session Year
 
 <section class="content">
     <div class="container-fluid">
-
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Add Session Year</h3>
+        <div class="row" style="padding-top: 0px;">
+            <div class="col-md-12" style="padding-left: 90px; padding-right: 90px;">
+                <div class="card card-primary" style="padding-left: 100px; padding-right: 100px; padding-bottom: 50px;">
+                    <div class="card-body">
+                        <h3><strong>Add Academic</strong></h3>
                     </div>
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <form role="form" method="POST" action="{% url 'add_session_save' %}">
+                    <form role="form" method="POST" action="{% url 'add-academic-year-save' %}">
                         {% csrf_token %}
-
-
-                        {% comment %} Display Messages {% endcomment %}
                         {% if messages %}
                         <div class="form-group">
                             <div class="col-12">
@@ -54,13 +47,13 @@ Add Session Year
 
                         <div class="card-body">
                             <div class="form-group">
-                                <label>Session Start Year </label>
-                                <input type="date" class="form-control" name="session_start_year">
+                                <label>Start Year </label>
+                                <input type="date" class="form-control" name="start_year">
                             </div>
 
                             <div class="form-group">
-                                <label>Session End Year </label>
-                                <input type="date" class="form-control" name="session_end_year">
+                                <label>End Year </label>
+                                <input type="date" class="form-control" name="end_year">
                             </div>
 
                         </div>

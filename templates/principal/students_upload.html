@@ -2,25 +2,24 @@
 
 
 {% block page_title %}
-Staff Bulk Upload
+Student Bulk Upload
 {% endblock page_title %}
 
 
 {% block main_content %}
 
-
   <div style="padding-left: 20px; padding-right: 20px;">
     <div class="col alert alert-info" style="padding-left: 80px;">
       <h5>Instruction</h5>
-      <p>Please <a href="{% url 'staff-download-csv' %}">download the CSV file attached here</a>. Fill in the sheet and
+      <p>Please <a href="{% url 'student-download' %}">download the CSV file attached here</a>. Fill in the sheet and
         upload the same file back to this page. DO NOT EDIT THE FIRST ROW</p>
     </div>
   </div>
 
   <div style="padding-left: 20px; padding-right: 20px;">
-    <form method="POST" action="#" enctype="multipart/form-data">
+    <form method="POST" action="{% url 'students-upload' %}" enctype="multipart/form-data">
       {% csrf_token %}
-      <input type="file" value="staff-bulk">
+      <input type="file" value="students-upload">
       <button type="submit">Upload</button>
     </form>
   </div>

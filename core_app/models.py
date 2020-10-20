@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 
 
 class CustomUser(AbstractUser):
-    user_type_data = ((1, 'Principal'), (2, 'Teacher'), (3, 'Student'))
+    user_type_data = ((1, 'Principal'), (2, 'Teacher'))
     user_type      = models.CharField(default=1, choices=user_type_data, max_length=10)
 
 
@@ -66,19 +66,25 @@ class Section(models.Model):
         return count
 
 class Student(models.Model):
-    admin         = models.OneToOneField(CustomUser, on_delete = models.CASCADE)
+    first_name    = models.CharField(max_length=55)
+    last_name     = models.CharField(max_length=55)
+    email         = models.EmailField(max_length=55)
     index_number  = models.CharField(max_length=10, unique=True)
     gender        = models.CharField(max_length=10)
-    profile_pic   = models.FileField()
     address       = models.TextField()
-    academic_year = models.ForeignKey('AcademicYear', on_delete=models.CASCADE)
-    num_regex     = RegexValidator(regex="^[0-9]{10,15}$", message="Example: 17882282")
-    parent_number = models.CharField(validators=[num_regex], max_length=13, blank=True)
+    #academic_year = models.ForeignKey('AcademicYear', on_delete=models.CASCADE)
+    parent_number = models.CharField(max_length=13, blank=True)
     dob           = models.DateField(default=timezone.now)
     my_section    = models.ForeignKey(Section, on_delete=models.CASCADE)
     profile_pic   = models.FileField(blank=True)
     created_at    = models.DateTimeField(auto_now_add=True)
     updated_at    = models.DateTimeField(auto_now=True)
+
+
+
+class StudentUpload(models.Model):
+  date_uploaded       = models.DateTimeField(auto_now=True)
+  csv_file            = models.FileField(upload_to='students/bulkupload/')
 
 
 class AssignSubject(models.Model):
@@ -89,11 +95,12 @@ class AssignSubject(models.Model):
         unique_together = [['rel_section', 'rel_subject']]
 
 class Subject(models.Model):
-    subject_name = models.CharField(max_length=255)
-    teacher      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    sections     = models.ManyToManyField(Section, through='AssignSubject')
-    created_at   = models.DateTimeField(auto_now_add=True)
-    updated_at   = models.DateTimeField(auto_now=True)
+    subject_name    = models.CharField(max_length=255)
+    sections        = models.ManyToManyField(Section, through='AssignSubject')
+    subject_teacher = models.ForeignKey(CustomUser, on_delete=models.DO_NOTHING)
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.subject_name
@@ -105,29 +112,21 @@ class Subject(models.Model):
 
 
 
-
-
-
-
-
-
-
-
 class AcademicYear(models.Model):
-    start_year = models.DateField()
-    end_year   = models.DateField()
+    aca_start_year = models.DateField(null=True)
+    aca_end_year   = models.DateField(null=True)
 
     def start_year(self):
-        return self.start_year.strftime('%Y')
+        return self.aca_start_year.strftime('%Y')
     
     def end_year(self):
-        return self.end_year.strftime('%Y')
+        return self.aca_end_year.strftime('%Y')
 
 
 class Attendance(models.Model):
     subject         = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
     attendance_date = models.DateField()
-    academic_year_year    = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academic_year   = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
 
@@ -208,15 +207,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             Principal.objects.create(admin=instance)
         if instance.user_type == 2:
             Teacher.objects.create(admin=instance)
-        if instance.user_type == 3:
-            Student.objects.create(
-                admin=instance, 
-                course_id=Section.objects.get(id=1), 
-                academic_year=AcademicYear.objects.get(id=1), 
-                address='', 
-                profile_pic='', 
-                gender=''
-            )
+     
 
 @receiver(post_save, sender=CustomUser)
 def save_user_profile(sender, instance, **kwargs):
@@ -224,6 +215,4 @@ def save_user_profile(sender, instance, **kwargs):
         instance.principal.save()
     if instance.user_type == 2:
         instance.teacher.save()
-    if instance.user_type == 3:
-        instance.student.save()
-    
+   

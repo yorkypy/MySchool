@@ -9,7 +9,7 @@
 {% load static %}
 
 <section class="content">
-    <a class="btn btn-primary" href="{% url 'add_subject' %}" role="button">+ Add Subject</a> <br/>&nbsp;
+    <a class="btn btn-primary" href="{% url 'add-subject' %}" role="button">+ Add Subject</a> <br/>&nbsp;
 
     {% if messages %}
         <div class="form-group">
@@ -40,7 +40,6 @@
                 <tr>
                 <th>ID</th>
                 <th>Subject Name</th>
-                <th>Section</th>
                 <th>Subject Teacher</th>
                 <th>Created At</th>
                 <th>Updated At</th>
@@ -52,13 +51,12 @@
                 <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ subject.subject_name }}</td>
-                <td>{{ subject.course_id.course_name }}</td>
-                <td>{{ subject.staff_id.first_name }} {{ subject.staff_id.last_name }}</td>
+                <td>{{ subject.subject_teacher.first_name }} {{ subject.subject_teacher.last_name }}</td></td>
                 <td>{{ subject.created_at }}</td>
                 <td>{{ subject.updated_at }}</td>
                 <td>
-                    <a href="{% url 'edit_subject' subject.id %}"><i class="fas fa-edit"></i></a> 
-                    <a href="{% url 'delete_subject' subject.id %}"><i class="fas fa-trash-alt" style="color: red;"></i></a>
+                    <a href="{% url 'edit-subject' subject.id %}"><i class="fas fa-edit"></i></a> 
+                    <a href="{% url 'delete-subject' subject.id %}"><i class="fas fa-trash-alt" style="color: red;"></i></a>
                 </td>
                 </tr>
                 {% endfor %}

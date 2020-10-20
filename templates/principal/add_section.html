@@ -50,7 +50,7 @@ Add Class
                         <div class="card-body">
                             <div class="form-group">
                                 <label>Section </label>
-                                <input type="text" class="form-control" name="class" placeholder="Class/Section">
+                                <input type="text" class="form-control" name="class" placeholder="Class/Section" id="id_section">
                             </div>
                         </div>
                         <div class="card-footer">
@@ -64,3 +64,39 @@ Add Class
 </section>
 
 {% endblock main_content %}
+
+
+{% block custom_js%}
+<script>
+    $(document).ready(function () {
+        // keyup event will be triggered when user leaves keyboard
+        $("#id_section").keyup(function () {
+            var section = $(this).val();
+            if (section != "") {
+                $.ajax({
+                    url: "{% url 'check-section-exist' %}",
+                    type: 'POST',
+                    data: { section: section }
+                })
+                .done(function (response) {
+                    if (response == True) {
+                        $(".section_error").remove();
+                        $("<span class='section_error' style='color: red; padding: 5px; font-weight: bold;'> Section Not Available. </span>").insertAfter("#id_section")
+                    }
+                    else {
+                        $(".section_error").remove();
+                        $("<span class='section_error' style='color: green; padding: 5px; font-weight: bold;'> Section Available. </span>").insertAfter("#id_section")
+                    }
+                })
+                .fail(function () {
+                    console.log("Failed");
+                })
+            }
+            else {
+                $(".section_error").remove();
+            }
+        })
+    })
+</script>
+{% endblock custom_js %}
+

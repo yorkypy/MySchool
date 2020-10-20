@@ -13,7 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView
 
-from core_app.models import AssignSection, CustomUser, FeedBackTeacher, LeaveReportTeacher, Principal, Section, Subject, Student, AcademicYear, FeedBackStudent, LeaveReportStudent, LeaveReportTeacher, Attendance, AttendanceReport, Teacher
+from core_app.models import AssignSection, CustomUser, FeedBackTeacher, LeaveReportTeacher, Principal, Section, StudentUpload, Subject, Student, AcademicYear, FeedBackStudent, LeaveReportStudent, LeaveReportTeacher, Attendance, AttendanceReport, Teacher
 from core_app.forms import AddStudentForm, AssignSectionForm, EditStudentForm
 
 
@@ -22,7 +22,7 @@ def principal_home(request):
     total_subjects = Subject.objects.all().count()
     total_sections = Section.objects.all().count()
     total_teachers = Teacher.objects.all().count()
-    principal = Principal.objects.all()
+    principal      = Principal.objects.all()
     
     """
     #Total Subjects and Student in each Section
@@ -94,12 +94,12 @@ def add_assign_section(request):
     }
     return render(request, 'principal/add_assign_section.html', context)
 
-def add_student_save(request):
+def add_assign_section_save(request):
     if request.method != 'POST':
         messages.error(request, 'Invalid Method')
         return redirect('add-assign-section')
     else:
-        form = AddStudentForm(request.POST, request.FILES)
+        form = AssignSectionForm(request.POST, request.FILES)
 
         if form.is_valid():
             re_teacher       = form.cleaned_data['re_teacher']
@@ -145,13 +145,13 @@ def add_teacher_save(request):
         profile_pic  = request.POST.get('profile_pic')
 
 
-        ''' if len(request.FILES) != 0:
+        if len(request.FILES) != 0:
             profile_pic = request.FILES['profile_pic']
             fs = FileSystemStorage()
             filename = fs.save(profile_pic.name, profile_pic)
             profile_pic_url = fs.url(filename)
         else:
-            profile_pic_url = None '''
+            profile_pic_url = None
 
         try:
             user = CustomUser.objects.create_user(
@@ -166,7 +166,7 @@ def add_teacher_save(request):
             user.teacher.address = address
             user.teacher.teacher_number=teacher_number
             user.teacher.gender=gender
-            user.teacher.profile_pic=profile_pic
+            user.teacher.profile_pic=profile_pic_url
             user.save()
             messages.success(request, 'Teacher Added Successfully!')
             return redirect('manage-teacher')
@@ -204,8 +204,11 @@ def edit_teacher_save(request):
         last_name      = request.POST.get('last_name')
         address        = request.POST.get('address')
         dob            = request.POST.get('dob')
+        gender         = request.POST.get('gender')
         teacher_number = request.POST.get('teacher_number')
-        teacher_id    = request.POST.get('teacher_id')
+        teacher_id     = request.POST.get('teacher_id')
+
+        
 
         try:
             # INSERTING into CustomUser Model
@@ -215,11 +218,13 @@ def edit_teacher_save(request):
             user.email = email
             user.username = username
             user.save()
+
             # INSERTING into Teacher Model
             teacher_obj=Teacher.objects.get(admin=teacher_id)
             teacher_obj.dob=dob
             teacher_obj.teacher_number=teacher_number
             teacher_obj.address=address
+            teacher_obj.gender=gender
             teacher_obj.save()
             messages.success(request, 'Teacher Updated Successfully.')
             return redirect(reverse('manage-teacher'), {'teacher_id': teacher_id})
@@ -227,17 +232,6 @@ def edit_teacher_save(request):
         except:
             messages.error(request, 'Failed to Update teacher.')
             return redirect(reverse('manage-teacher'), {'teacher_id': teacher})
-
-
-def delete_teacher(request, teacher_id):
-    teacher = Teacher.objects.get(admin=teacher_id)
-    try:
-        teacher.delete()
-        messages.success(request, 'teacher Deleted Successfully.')
-        return redirect('manage_teacher')
-    except:
-        messages.error(request, 'Failed to Delete teacher.')
-        return redirect('manage_teacher')
 
 def teacher_detail(request, teacher_id):
     teacher = Teacher.objects.get(admin=teacher_id)
@@ -248,10 +242,26 @@ def teacher_detail(request, teacher_id):
     }
     return render(request, 'principal/teacher_detail.html',context)
 
+
+def delete_teacher(request, teacher_id):
+    teacher = Teacher.objects.get(admin=teacher_id)
+    try:
+        teacher.delete()
+        messages.success(request, 'teacher Deleted Successfully.')
+        return redirect('manage-teacher')
+    except:
+        messages.error(request, 'Failed to Delete teacher.')
+        return redirect('manage-teacher')
+
+
+
+
+# STUDENTS
 def add_student(request):
-    form = AddStudentForm()
+    sections = Section.objects.all()
+        
     context = {
-        'form': form
+        'sections': sections
     }
     return render(request, 'principal/add_student.html', context)
 
@@ -259,128 +269,90 @@ def add_student(request):
 def add_student_save(request):
     if request.method != 'POST':
         messages.error(request, 'Invalid Method')
-        return redirect('add_student')
+        return redirect('add-student')
     else:
-        form = AddStudentForm(request.POST, request.FILES)
+        first_name      = request.POST.get('first_name')
+        last_name       = request.POST.get('last_name')
+        email           = request.POST.get('email')
+        index_number    = request.POST.get('index_number')
+        address         = request.POST.get('address')
+        dob             = request.POST.get('dob')
+        parent_number   = request.POST.get('parent_number')
+        gender          = request.POST.get('gender')
+        section         = request.POST.get('section')
+        profile_pic     = request.POST.get('profile_pic')
 
-        if form.is_valid():
-            first_name    = form.cleaned_data['first_name']
-            last_name     = form.cleaned_data['last_name']
-            username      = form.cleaned_data['username']
-            email         = form.cleaned_data['email']
-            password      = form.cleaned_data['password']
-            address       = form.cleaned_data['address']
-            academic_year = form.cleaned_data['academic_year']
-            section       = form.cleaned_data['section']
-            gender        = form.cleaned_data['gender']
-            parent_number = form.cleaned_data['parent_number']
-            dob           = form.cleaned_data['dob']
-            
-            if len(request.FILES) != 0:
-                profile_pic = request.FILES['profile_pic']
-                fs = FileSystemStorage()
-                filename = fs.save(profile_pic.name, profile_pic)
-                profile_pic_url = fs.url(filename)
-            else:
-                profile_pic_url = None
 
-            try:
-                user = CustomUser.objects.create_user(
-                    username=username, 
-                    password=password, 
-                    email=email, 
-                    first_name=first_name, 
-                    last_name=last_name, 
-                    user_type=3
-                )
-                user.Student.address = address
-    
-                section_obj = Section.objects.get(id=section)
-                user.Student.section = section_obj
-    
-                academic_year_obj = AcademicYear.objects.get(id=academic_year)
-                user.Student.academic_year = academic_year_obj
-                user.Student.parent_number=parent_number
-                user.Student.dob=dob
-    
-                user.Student.gender = gender
-                user.Student.profile_pic = profile_pic_url
-                user.save()
-                messages.success(request, 'Student Added Successfully!')
-                return redirect('manage_student')
-            except:
-                messages.error(request, 'Failed to Add Student!')
-                return redirect('manage_student')
+        if len(request.FILES) != 0:
+            profile_pic = request.FILES['profile_pic']
+            fs = FileSystemStorage()
+            filename = fs.save(profile_pic.name, profile_pic)
+            profile_pic_url = fs.url(filename)
         else:
-            return redirect('manage_student')
+            profile_pic_url = None
+        
+        my_sec = Section.objects.get(section_name=section)
 
+        try:
+            student = Student(
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                index_number=index_number,
+                address=address,
+                parent_number=parent_number,
+                profile_pic=profile_pic_url,
+                gender=gender,
+                dob=dob
+            )
+            student.my_section=my_sec
+            student.save()
+            messages.success(request, 'Student Added Successfully!')
+            return redirect(reverse('manage-student'))
+        except:
+            messages.error(request, 'Failed to Add Student!')
+            return redirect(reverse('manage-student'))
+    
 
 def manage_student(request):
-    student = Student.objects.all()
+    students = Student.objects.all()
     context = {
-        'student': student
+        'students': students
     }
     return render(request, 'principal/manage_student.html', context)
 
 
 def edit_student(request, student_id):
-    # Adding Student ID into academic_year Variable
-    request.academic_year['student'] = student_id
-
-    student = Student.objects.get(admin=student_id)
-    form = EditStudentForm()
-    # Filling the form with Data from Database
-    form.fields['email'].initial         = student.admin.email
-    form.fields['username'].initial      = student.admin.username
-    form.fields['first_name'].initial    = student.admin.first_name
-    form.fields['last_name'].initial     = student.admin.last_name
-    form.fields['address'].initial       = student.address
-    form.fields['section'].initial       = student.section.id
-    form.fields['gender'].initial        = student.gender
-    form.fields['academic_year'].initial = student.academic_year.id
-
-    context = {
-        'id': student,
-        'username': student.admin.username,
-        'form': form
-    }
-    return render(request, 'principal/edit_student.html', context)
-
-
-
-def student_detail(request, student_id):
-    student = Student.objects.get(admin=student_id)
-    profile_pic = Student.objects.all()
+    student = Student.objects.get(id=student_id)
     context = {
         'student': student,
-        'profile_pic': profile_pic
+        'id': student
     }
-
-    return render(request, 'principal/student_detail.html', context)
+    return render(request, 'principal/edit_student.html', context)
 
 
 def edit_student_save(request):
     if request.method != 'POST':
         return HttpResponse('Invalid Method!')
     else:
-        student = request.academic_year.get('student')
-        if student == None:
-            return redirect('/manage_student')
+        student_id = request.session.get('student_id')
+        if student_id == None:
+            return redirect(reverse('manage_student'))
 
         form = EditStudentForm(request.POST, request.FILES)
         if form.is_valid():
-            email = form.cleaned_data['email']
-            username = form.cleaned_data['username']
             first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            address = form.cleaned_data['address']
-            section = form.cleaned_data['section']
-            gender = form.cleaned_data['gender']
-            academic_year = form.cleaned_data['academic_year']
+            last_name  = form.cleaned_data['last_name']
+            email      = form.cleaned_data['email']
+            index_number  = form.cleaned_data['index_number'] 
+            parent_number = form.cleaned_data['parent_number']
+            address     = form.cleaned_data['address']
+            profile_pic = form.cleaned_data['profile_pic']
+            gender      = form.cleaned_data['gender']
+            aca_year    = form.cleaned_data['aca_year']
+            section     = form.cleaned_data['my_section']
+            dob         = form.cleaned_data['dob']  
 
-            # Getting Profile Pic first
-            # First Check whether the file is selected or not
-            # Upload only if file is selected
             if len(request.FILES) != 0:
                 profile_pic = request.FILES['profile_pic']
                 fs = FileSystemStorage()
@@ -388,54 +360,85 @@ def edit_student_save(request):
                 profile_pic_url = fs.url(filename)
             else:
                 profile_pic_url = None
-
+                               
             try:
-                # First Update into Custom User Model
-                user = CustomUser.objects.get(id=student)
-                user.first_name = first_name
-                user.last_name = last_name
-                user.email = email
-                user.username = username
-                user.save()
+                academic_year_obj = AcademicYear.objects.get(id=aca_year)            
+                section_obj = Section.objects.get(id=section)
+                student = Student(
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    address=address,
+                    dob=dob,
+                    gender=gender,
+                    parent_number=parent_number,
+                    index_number=index_number,
+                    profile_pic=profile_pic_url,
+                )
 
-                # Then Update Student Table
-                student_model = Student.objects.get(admin=student)
-                student_model.address = address
-
-                section = Section.objects.get(id=section)
-                student_model.section = section
-
-                academic_year_obj = AcademicYear.objects.get(id=academic_year)
-                student_model.academic_year = academic_year_obj
-
-                student_model.gender = gender
-                if profile_pic_url != None:
-                    student_model.profile_pic = profile_pic_url
-                student_model.save()
-                # Delete student academic_year after the data is updated
-                del request.academic_year['student']
-
-                messages.success(request, 'Student Updated Successfully!')
-                return redirect('/edit_student/'+student)
+                student.academic_year=academic_year_obj
+                student.my_section=section_obj
+                student.save()
+                messages.success(request, 'Student Updated Successfully.')
+                return redirect(reverse('manage-student'), {'student_id': student_id})
             except:
-                messages.success(request, 'Failed to Uupdate Student.')
-                return redirect('/edit_student/'+student)
-        else:
-            return redirect('/edit_student/'+student)
+                messages.error(request, 'Failed to Update student.')
+                return redirect(reverse('manage-student'), {'student_id': student_id})
+
+        
+def student_detail(request, student_id):
+    student = Student.objects.get(id=student_id)
+    profile_pic = Student.objects.all()
+    context = {
+        'student': student,
+        'profile_pic': profile_pic
+    }
+    return render(request, 'principal/student_detail.html', context)
 
 
 def delete_student(request, student_id):
-    student = Student.objects.get(admin=student_id)
+    student = Student.objects.get(id=student_id)
     try:
         student.delete()
         messages.success(request, 'Student Deleted Successfully.')
-        return redirect('manage_student')
+        return redirect('manage-student')
     except:
         messages.error(request, 'Failed to Delete Student.')
-        return redirect('manage_student')
+        return redirect('manage-student')
+
+
+class StudentUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = StudentUpload
+    template_name = 'principal/students_upload.html'
+    fields = ['csv_file']
+    success_url = 'manage-student'
+    success_message = 'Successfully uploaded students'
+
+@login_required
+def downloadcsv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="student_template.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+        'firstname', 
+        'last_name', 
+        'email',
+        'gender', 
+        'parent_number', 
+        'address', 
+        'dob',
+        'academic_year',
+        'my_section',
+        ]
+    )
+    return response
 
 
 
+
+#SECTION/CLASS
 def add_section(request):
     class_teacher = CustomUser.objects.filter(user_type='2')
     context = {
@@ -510,34 +513,39 @@ def delete_section(request, section_id):
         return redirect('manage-section')
 
 
+
+
+def add_academic_year(request):
+    return render(request, 'principal/add_academic_year.html')
+
+
 def manage_academic_year(request):
     academic_years = AcademicYear.objects.all()
     context = {
         'academic_years': academic_years
     }
-    return render(request, 'principal/manage_academic_year_template.html', context)
-
-
-def add_academic_year(request):
-    return render(request, 'principal/add_academic_year_template.html')
+    return render(request, 'principal/manage_academic_year.html', context)
 
 
 def add_academic_year_save(request):
     if request.method != 'POST':
         messages.error(request, 'Invalid Method')
-        return redirect('add_section')
+        return redirect('add-academic')
     else:
-        academic_year_start_year = request.POST.get('academic_year_start_year')
-        academic_year_end_year = request.POST.get('academic_year_end_year')
+        start_year = request.POST.get('start_year')
+        end_year = request.POST.get('end_year')
 
-        try:
-            academic_yearyear = AcademicYear(academic_year_start_year=academic_year_start_year, academic_year_end_year=academic_year_end_year)
-            academic_yearyear.save()
-            messages.success(request, 'academic_year Year added Successfully!')
-            return redirect('add_academic_year')
-        except:
-            messages.error(request, 'Failed to Add academic_year Year')
-            return redirect('add_academic_year')
+        #try:
+        academic_year = AcademicYear(
+            aca_start_year=start_year, 
+            aca_end_year=end_year
+        )
+        academic_year.save()
+        messages.success(request, 'Academic Year added Successfully!')
+        return redirect('manage-academic-year')
+        #except:
+        #    messages.error(request, 'Failed to Add Academic Year')
+        #    return redirect('manage-academic-year')
 
 
 def edit_academic_year(request, academic_year_id):
@@ -545,13 +553,13 @@ def edit_academic_year(request, academic_year_id):
     context = {
         'academic_year': academic_year
     }
-    return render(request, 'principal/edit_academic_year_template.html', context)
+    return render(request, 'principal/edit_academic_year.html', context)
 
 
 def edit_academic_year_save(request):
     if request.method != 'POST':
         messages.error(request, 'Invalid Method!')
-        return redirect('manage_academic_year')
+        return redirect('manage-academic-year')
     else:
         academic_year = request.POST.get('academic_year')
         academic_year_start_year = request.POST.get('academic_year_start_year')
@@ -564,10 +572,10 @@ def edit_academic_year_save(request):
             academic_year.save()
 
             messages.success(request, 'academic_year Year Updated Successfully.')
-            return redirect('/edit_academic_year/'+academic_year)
+            return redirect('/edit-academic-year/'+academic_year)
         except:
             messages.error(request, 'Failed to Update academic_year Year.')
-            return redirect('/edit_academic_year/'+academic_year)
+            return redirect('/edit-academic-year/'+academic_year)
 
 
 def delete_academic_year(request, academic_year_id):
@@ -575,20 +583,17 @@ def delete_academic_year(request, academic_year_id):
     try:
         academic_year.delete()
         messages.success(request, 'academic_year Deleted Successfully.')
-        return redirect('manage_academic_year')
+        return redirect('manage-academic-year')
     except:
         messages.error(request, 'Failed to Delete academic_year.')
-        return redirect('manage_academic_year')
-
+        return redirect('manage-academic-year')
 
 
 
 def add_subject(request):
-    tection = Section.objects.all()
-    teacher= CustomUser.objects.filter(user_type='2')
+    teachers = CustomUser.objects.filter(user_type='2')
     context = {
-        'tection': tection,
-        'teacher': teacher
+        'teachers': teachers
     }
     return render(request, 'principal/add_subject.html', context)
 
@@ -597,28 +602,24 @@ def add_subject(request):
 def add_subject_save(request):
     if request.method != 'POST':
         messages.error(request, 'Method Not Allowed!')
-        return redirect('add_subject')
+        return redirect('add-subject')
     else:
         subject_name = request.POST.get('subject')
 
-        section = request.POST.get('section')
-        section = Section.objects.get(id=section)
-        
-        teacher = request.POST.get('teacher')
-        teacher = CustomUser.objects.get(id=teacher)
+        teacher_id = request.POST.get('subject_t')
+        teacher = CustomUser.objects.get(id=teacher_id)  
 
         try:
             subject = Subject(
                 subject_name=subject_name, 
-                section=section, 
-                teacher=teacher
             )
+            subject.subject_teacher=teacher
             subject.save()
             messages.success(request, 'Subject Added Successfully!')
-            return redirect('add_subject')
+            return redirect('manage-subject')
         except:
             messages.error(request, 'Failed to Add Subject!')
-            return redirect('add_subject')
+            return redirect('manage-subject')
 
 
 def manage_subject(request):
@@ -626,20 +627,16 @@ def manage_subject(request):
     context = {
         'subjects': subjects
     }
-    return render(request, 'principal/manage_subject_template.html', context)
+    return render(request, 'principal/manage_subject.html', context)
 
 
 def edit_subject(request, subject_id):
     subject = Subject.objects.get(id=subject_id)
-    section = Section.objects.all()
-    teacher= CustomUser.objects.filter(user_type='2')
     context = {
         'subject': subject,
-        'section': section,
-        'teacher': teacher,
         'id': subject
     }
-    return render(request, 'principal/edit_subject_template.html', context)
+    return render(request, 'principal/edit_subject.html', context)
 
 
 def edit_subject_save(request):
@@ -648,29 +645,18 @@ def edit_subject_save(request):
     else:
         subject = request.POST.get('subject')
         subject_name = request.POST.get('subject')
-        section = request.POST.get('section')
-        teacher = request.POST.get('teacher')
-
+    
         try:
             subject = Subject.objects.get(id=subject)
             subject.subject_name = subject_name
-
-            section = Section.objects.get(id=section)
-            subject.section = section
-
-            teacher = CustomUser.objects.get(id=teacher)
-            subject.teacher = teacher
-            
             subject.save()
 
             messages.success(request, 'Subject Updated Successfully.')
-            # return redirect('/edit_subject/'+subject)
-            return HttpResponseRedirect(reverse('edit_subject', kwargs={'subject':subject}))
+            return HttpResponseRedirect(reverse('edit-subject', kwargs={'subject':subject}))
 
         except:
             messages.error(request, 'Failed to Update Subject.')
-            return HttpResponseRedirect(reverse('edit_subject', kwargs={'subject':subject}))
-            # return redirect('/edit_subject/'+subject)
+            return HttpResponseRedirect(reverse('edit-subject', kwargs={'subject':subject}))
 
 
 
@@ -679,10 +665,10 @@ def delete_subject(request, subject_id):
     try:
         subject.delete()
         messages.success(request, 'Subject Deleted Successfully.')
-        return redirect('manage_subject')
+        return redirect('manage-subject')
     except:
         messages.error(request, 'Failed to Delete Subject.')
-        return redirect('manage_subject')
+        return redirect('manage-subject')
 
 
 @csrf_exempt
@@ -700,6 +686,16 @@ def check_username_exist(request):
     username = request.POST.get('username')
     user_obj = CustomUser.objects.filter(username=username).exists()
     if user_obj:
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)
+
+
+@csrf_exempt
+def check_section_exist(request):
+    section = request.POST.get('class')
+    section_obj = Section.objects.filter(section_name=section).exists()
+    if section_obj:
         return HttpResponse(True)
     else:
         return HttpResponse(False)

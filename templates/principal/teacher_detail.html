@@ -3,13 +3,13 @@
 
 {% block main_content %}
     <div class="card-header">
-      <div class="card-tools">
-        <a href="#"><i class="fas fa-print"></i></a>
+      <div class="card-tools" style="padding-right: 20px;">
+        <a href="#"><i class="fas fa-print" style="color: blueviolet;"></i></a>
         <a href="{% url 'edit-teacher' teacher.admin.id %}" class="btn btn-tool">
-          <i class="fas fa-edit" style="color: blue"></i>
+          <i class="fas fa-edit" style="color: blueviolet;"></i>
         </a>
-        <a href="{% url 'delete-teacher' teacher.admin.id %}" class="btn btn-tool">
-          <i class="fas fa-trash-alt" style="color: red"></i>
+        <a href="{% url 'delete-teacher' teacher.admin.id %}">
+          <i class="fas fa-trash" style="color: red;"></i>
         </a>
       </div>
     </div>
@@ -20,7 +20,7 @@
 
           {% if profile_image.profile_pic %}
             <img
-              src="{{ profile_image.profile_profile.url }}"
+              src="{{ profile_image.profile_profile }}"
               class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
           {% else %}
             <img
@@ -29,14 +29,11 @@
           {% endif %}
 
           <div class="float-right">
-            <h4>Nima Yonten</h4>
-            <h4>Science</h4>
-            <h4>12A</h4>
-            <h4>Dcholing</h4>
+            <h4>{{ teacher.admin.first_name }} {{ teacher.admin.last_name }}</h4>
+            <h4></h4>
           </div>
         </div>
-        <h5>12A</h5>
-        <h5>male</h5>
+        <h5>{{ teacher.gender }}</h5>
 
       </div>
       <div class="col-sm-8">
@@ -46,16 +43,15 @@
               Date of Birth
             </label>
             <div class="col">
-              12/21/1111
+              {{ teacher.dob }}
             </div>
           </div>
-
           <div class="form-group border-bottom row">
             <label class="col">
-              Parent Mobile Number
+              Phone Number
             </label>
             <div class="col">
-                6545678
+              {{ teacher.teacher_number }}
             </div>
           </div>
 
@@ -64,20 +60,10 @@
               Address
             </label>
             <div class="col">
-              Pling
+              {{ teacher.address }}
             </div>
           </div>
-          <div class="form-group border-bottom row">
-            <label class="col">
-              Comments
-            </label>
-            <div class="col">
-              Jbjbj
-            </div>
-          </div>
-
         </div>
-
       </div>
     </div>
 
@@ -107,7 +93,70 @@
         <p>There are no payment history for {{object}}</p>
     {% endif %} -->
 
-
-
-
 {% endblock main_content %}
+
+
+
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Modal header</h3>
+    </div>
+    <div class="modal-body">
+      <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <button class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+  </div>
+  </div>
+  
+  <div id="myModal" class="modal hide">
+      <div class="modal-header">
+          <a href="#" data-dismiss="modal" aria-hidden="true" class="close">×</a>
+           <h3>Delete</h3>
+      </div>
+      <div class="modal-body">
+          <p>You are about to delete.</p>
+          <p>Do you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" id="btnYes" class="btn danger">Yes</a>
+        <a href="#" data-dismiss="modal" aria-hidden="true" class="btn secondary">No</a>
+      </div>
+  </div>
+  
+  <div class="container">
+      <a href="#" role="button" class="btn btn-default confirm-delete" data-id="1" data-toggle="modal"><i class="fa fa-trash-o fa-lg "></i></a><br>
+   <a href="#" role="button" class="btn btn-default confirm-delete" data-id="2" data-toggle="modal"><i class="fa fa-trash-o fa-lg fa-fw"></i></a><br>
+    <a href="#" role="button" class="btn btn-default confirm-delete" data-id="3" data-toggle="modal"><i class="fa fa-trash-o fa-lg fa-fw"></i></a><br>
+   <a href="#" role="button" class="btn btn-default confirm-delete" data-id="4" data-toggle="modal"><i class="fa fa-trash-o fa-lg fa-fw"></i></a><br>
+  </div>
+  
+  
+
+<script>
+    $('#myModal').on('show', function() {
+    var id = $(this).data('id'),
+        removeBtn = $(this).find('.danger');
+})
+
+$('.confirm-delete').on('click', function(e) {
+    e.preventDefault();
+
+    var id = $(this).data('id');
+    $('#myModal').data('id', id).modal('show');
+});
+
+$('#btnYes').click(function() {
+    // handle deletion here
+  	var id = $('#myModal').data('id');
+  	$('[data-id='+id+']').remove();
+  	$('#myModal').modal('hide');
+});
+</script>

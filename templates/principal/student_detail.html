@@ -7,10 +7,10 @@
     <div class="card-tools">
     
       <a href="#"><strong>Print</strong></a>
-      <a href="{% url 'edit_student' student.admin.id %}" class="btn btn-tool">
+      <a href="{% url 'edit-student' student.id %}" class="btn btn-tool">
         <i class="fas fa-edit" style="color: blue"></i>
       </a>
-      <a href="{% url 'delete_student' student.admin.id %}" class="btn btn-tool">
+      <a href="{% url 'delete-student' student.id %}" class="btn btn-tool">
         <i class="fas fa-trash-alt" style="color: red"></i>
       </a>
     </div>
@@ -28,16 +28,14 @@
               src="{% static 'admin/img/avatar.png' %}"
               class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
           {% endif %}
-
           <div class="float-right">
-            <h4>Nima Yonten</h4>
-            <h4>Science</h4>
-            <h4>12A</h4>
-            <h4>Dcholing</h4>
+            <h4>{{ student.first_name }} {{ student.last_name }}</h4>
+            <h4>{{ student.index_number }}</h4>
+            <h4></h4>
           </div>
         </div>
-        <h5>12A</h5>
-        <h5>male</h5>
+        <h5>{{ student.gender }}</h5>
+        <h5>{{ student.my_section }}</h5>
 
       </div>
       <div class="col-sm-8">
@@ -47,7 +45,7 @@
               Date of Birth
             </label>
             <div class="col">
-              12/21/1111
+              {{ student.dob }}
             </div>
           </div>
 
@@ -56,7 +54,7 @@
               Parent Mobile Number
             </label>
             <div class="col">
-                6545678
+                {{ student.parent_number }}
             </div>
           </div>
 
@@ -65,20 +63,11 @@
               Address
             </label>
             <div class="col">
-              Pling
-            </div>
-          </div>
-          <div class="form-group border-bottom row">
-            <label class="col">
-              Comments
-            </label>
-            <div class="col">
-              Jbjbj
+              {{ student.address }}
             </div>
           </div>
 
         </div>
-
       </div>
     </div>
 

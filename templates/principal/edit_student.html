@@ -1,0 +1,22 @@
+{% extends 'principal/base.html' %}
+
+{% block main_content %}
+
+{% load static %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row" style="padding-top: 0px;">
+            <div class="col-md-12" style="padding-left: 90px; padding-right: 90px;">
+                <div class="card card-primary" style="padding-left: 40px;">
+                <div class="card-body">
+                    <h3><strong>Edit Student</strong></h3>
+                </div>
+                    {% url 'edit-student-save' as action_path %}
+                    {% include 'principal/form.html' with messages=messages form=form action_path=action_path button_text="Update Student" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  {% endblock main_content %}
